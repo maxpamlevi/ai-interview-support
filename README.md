@@ -1,13 +1,15 @@
 # 🎙️ AI Interview Assistant
 
+[Đọc bằng tiếng Việt](README.vi.md)
+
 <div align="center">
 
 ![Python](https://img.shields.io/badge/Python-3.10%2B-blue?style=for-the-badge&logo=python)
 ![Gemini](https://img.shields.io/badge/AI-Gemini_2.0-orange?style=for-the-badge&logo=google)
 ![PyQt6](https://img.shields.io/badge/GUI-PyQt6-green?style=for-the-badge&logo=qt)
 
-**Hệ thống hỗ trợ phỏng vấn thời gian thực sử dụng AI**
-*Nhận diện câu hỏi - Gợi ý câu trả lời thông minh - Tối ưu hóa độ trễ*
+**Real-time AI Interview Support System**
+*Question Detection - Smart Answer Suggestions - Low Latency Optimization*
 
 </div>
 
@@ -15,20 +17,20 @@
 
 ## ✨ Features
 
-- **Real-time Audio Capture**: Thu âm trực tiếp từ hệ thống (Zoom, Google Meet, Teams) hoặc Microphone.
-- **Smart VAD (Voice Activity Detection)**: Tự động loại bỏ khoảng lặng, chỉ xử lý giọng nói thực.
-- **Gemini 2.0 Integration**: Phân tích câu hỏi và gợi ý câu trả lời chuyên nghiệp trong tích tắc.
-- **Floating Overlay UI**: Giao diện trong suốt, luôn nổi trên cùng, hiển thị gợi ý mà không che khuất màn hình phỏng vấn.
-- **Multi-language Support**: Hỗ trợ tốt cả Tiếng Anh và Tiếng Việt.
+- **Real-time Audio Capture**: Capture audio directly from the system (Zoom, Google Meet, Teams) or Microphone.
+- **Smart VAD (Voice Activity Detection)**: Automatically removes silence, processing only actual speech.
+- **Gemini 2.0 Integration**: Analyzes questions and provides professional answer suggestions instantly.
+- **Floating Overlay UI**: Transparent interface, always on top, displaying suggestions without obscuring the interview screen.
+- **Multi-language Support**: Excellent support for both English and Vietnamese.
 
 ## 🛠️ Prerequisites
 
-Trước khi cài đặt, hãy đảm bảo bạn đã có:
+Before installing, ensure you have:
 
 1.  **Python 3.10+**: [Download here](https://www.python.org/downloads/)
-2.  **BlackHole (Virtual Audio Driver)**: Để thu âm thanh từ hệ thống (Zoom/Meet) mà không cần bật loa ngoài.
-    -   Tải và cài đặt **BlackHole 2ch**: [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole)
-    -   *Tại sao cần?* Các ứng dụng họp thường chiếm quyền micro, BlackHole giúp "loopback" âm thanh đầu ra của người phỏng vấn để AI nghe được.
+2.  **BlackHole (Virtual Audio Driver)**: To capture system audio (Zoom/Meet) without using external speakers.
+    -   Download and install **BlackHole 2ch**: [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole)
+    -   *Why needed?* Meeting apps often take exclusive control of the microphone; BlackHole helps "loopback" the interviewer's audio output so the AI can hear it.
 
 ## 🚀 Installation
 
@@ -51,52 +53,52 @@ pip install -r requirements.txt
 ```
 
 ### 4. Create Configuration
-Tạo file `.env` tại thư mục gốc và thêm API Key Gemini của bạn:
+Create a `.env` file in the root directory and add your Gemini API Key:
 ```ini
 GEMINI_API_KEY=your_api_key_here
 ```
-> 👉 Lấy API Key tại: [Google AI Studio](https://aistudio.google.com/)
+> 👉 Get API Key at: [Google AI Studio](https://aistudio.google.com/)
 
 ---
 
-## 🎧 Setup Audio (Quan trọng)
+## 🎧 Setup Audio (Important)
 
-Để AI nghe được tiếng của người phỏng vấn (từ Zoom/Meet), bạn cần cấu hình **Multi-Output Device** trên MacOS:
+For the AI to hear the interviewer (from Zoom/Meet), you need to configure a **Multi-Output Device** on MacOS:
 
-1.  Mở **Audio MIDI Setup** (Tìm trong Spotlight).
-2.  Nhấn dấu `+` ở góc dưới trái -> **Create Multi-Output Device**.
-3.  Tích chọn:
-    -   ✅ **MacBook Speakers** (hoặc tai nghe của bạn) -> *Để bạn nghe được.*
-    -   ✅ **BlackHole 2ch** -> *Để AI nghe được.*
-    -   (Chọn Master Device là Speakers/Headphones để chỉnh được volume).
-4.  Trong phần cài đặt Âm thanh của MacOS (System Settings -> Sound):
-    -   Output: Chọn **Multi-Output Device** vừa tạo.
+1.  Open **Audio MIDI Setup** (Search in Spotlight).
+2.  Click the `+` icon in the bottom left -> **Create Multi-Output Device**.
+3.  Check the boxes for:
+    -   ✅ **MacBook Speakers** (or your headphones) -> *So you can hear.*
+    -   ✅ **BlackHole 2ch** -> *So the AI can hear.*
+    -   (Select Master Device as Speakers/Headphones to control volume).
+4.  In MacOS Sound settings (System Settings -> Sound):
+    -   Output: Select the **Multi-Output Device** you just created.
 
 ---
 
 ## 🎮 Usage
 
-1.  Chạy ứng dụng:
+1.  Run the application:
     ```bash
     python main.py
     ```
-2.  Trên giao diện Overlay:
-    -   **Device**: Chọn **BlackHole 2ch** (để nghe người phỏng vấn) hoặc Microphone (để test giọng bạn).
-    -   **Language**: Chọn Tiếng Việt hoặc English.
-3.  Nhấn **Start Listening**.
-4.  Khi người phỏng vấn nói xong, AI sẽ tự động phát hiện, xử lý và hiện gợi ý lên màn hình.
+2.  On the Overlay interface:
+    -   **Device**: Select **BlackHole 2ch** (to hear the interviewer) or Microphone (to test your voice).
+    -   **Language**: Select Vietnamese or English.
+3.  Click **Start Listening**.
+4.  When the interviewer finishes speaking, the AI will automatically detect, process, and display suggestions on the screen.
 
 ---
 
 ## ❓ Troubleshooting
 
--   **Không thấy gợi ý hiện ra?**
-    -   Kiểm tra xem volume của BlackHole trong Audio MIDI Setup có bị Mute không.
-    -   Đảm bảo bạn đã chọn đúng Device trong app là BlackHole.
-    -   Xem log trên giao diện để biết trạng thái (Listening/Processing).
+-   **No suggestions appearing?**
+    -   Check if BlackHole volume in Audio MIDI Setup is Muted.
+    -   Ensure you selected the correct Device (BlackHole) in the app.
+    -   Check the log on the interface for status (Listening/Processing).
 
--   **Lỗi OpenAI/Gemini API?**
-    -   Kiểm tra lại file `.env` và chắc chắn API Key còn hạn mức.
+-   **OpenAI/Gemini API Error?**
+    -   Check `.env` file and ensure your API Key has quota remaining.
 
 ---
 
