@@ -1,0 +1,10 @@
+google-generativeai
+sounddevice
+numpy
+torch
+PyQt6
+python-dotenv
+scipy
+torchaudio
+packaging
+silero-vad
