@@ -74,7 +74,7 @@ class OverlayUI(QMainWindow):
 
         # Device Selector
         self.device_combo = QComboBox()
-        self.device_combo.setToolTip("Select Input Device (e.g. BlackHole for System Audio)")
+        self.device_combo.setToolTip("Select Input Device")
         # We will populate this from main.py or audio_recorder
         header_layout.addWidget(self.device_combo)
         

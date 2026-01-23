@@ -28,9 +28,6 @@
 Trước khi cài đặt, hãy đảm bảo bạn đã có:
 
 1.  **Python 3.10+**: [Download here](https://www.python.org/downloads/)
-2.  **BlackHole (Virtual Audio Driver)**: Để thu âm thanh từ hệ thống (Zoom/Meet) mà không cần bật loa ngoài.
-    -   Tải và cài đặt **BlackHole 2ch**: [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole)
-    -   *Tại sao cần?* Các ứng dụng họp thường chiếm quyền micro, BlackHole giúp "loopback" âm thanh đầu ra của người phỏng vấn để AI nghe được.
 
 ## 🚀 Installation
 
@@ -61,20 +58,7 @@ GEMINI_API_KEY=your_api_key_here
 
 ---
 
-## 🎧 Setup Audio (Quan trọng)
 
-Để AI nghe được tiếng của người phỏng vấn (từ Zoom/Meet), bạn cần cấu hình **Multi-Output Device** trên MacOS:
-
-1.  Mở **Audio MIDI Setup** (Tìm trong Spotlight).
-2.  Nhấn dấu `+` ở góc dưới trái -> **Create Multi-Output Device**.
-3.  Tích chọn:
-    -   ✅ **MacBook Speakers** (hoặc tai nghe của bạn) -> *Để bạn nghe được.*
-    -   ✅ **BlackHole 2ch** -> *Để AI nghe được.*
-    -   (Chọn Master Device là Speakers/Headphones để chỉnh được volume).
-4.  Trong phần cài đặt Âm thanh của MacOS (System Settings -> Sound):
-    -   Output: Chọn **Multi-Output Device** vừa tạo.
-
----
 
 ## 🎮 Usage
 
@@ -83,7 +67,7 @@ GEMINI_API_KEY=your_api_key_here
     python main.py
     ```
 2.  Trên giao diện Overlay:
-    -   **Device**: Chọn **BlackHole 2ch** (để nghe người phỏng vấn) hoặc Microphone (để test giọng bạn).
+    -   **Device**: Chọn **System Audio** (để nghe người phỏng vấn) hoặc Microphone (để test giọng bạn).
     -   **Language**: Chọn Tiếng Việt hoặc English.
 3.  Nhấn **Start Listening**.
 4.  Khi người phỏng vấn nói xong, AI sẽ tự động phát hiện, xử lý và hiện gợi ý lên màn hình.
@@ -93,8 +77,7 @@ GEMINI_API_KEY=your_api_key_here
 ## ❓ Troubleshooting
 
 -   **Không thấy gợi ý hiện ra?**
-    -   Kiểm tra xem volume của BlackHole trong Audio MIDI Setup có bị Mute không.
-    -   Đảm bảo bạn đã chọn đúng Device trong app là BlackHole.
+    -   Đảm bảo bạn đã chọn đúng Device trong app.
     -   Xem log trên giao diện để biết trạng thái (Listening/Processing).
 
 -   **Lỗi OpenAI/Gemini API?**

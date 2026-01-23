@@ -103,14 +103,9 @@ def main():
     
     for idx, name in input_devices:
         ui.device_combo.addItem(f"{name}", idx)
-        # Select BlackHole or System Audio by default
+        # Select System Audio by default
         if "System Audio" in name:
             ui.device_combo.setCurrentIndex(ui.device_combo.count() - 1)
-        elif "BlackHole" in name and ui.device_combo.count() > 0:
-             # Prefer System Audio if available, else BlackHole
-             # If "System Audio" was just added, it is last.
-             # If we are iterating, we just set checking names.
-             pass
 
     # Ensure System Audio is selected if available (last item usually)
     if "System Audio" in ui.device_combo.itemText(ui.device_combo.count() - 1):

@@ -28,9 +28,6 @@
 Before installing, ensure you have:
 
 1.  **Python 3.10+**: [Download here](https://www.python.org/downloads/)
-2.  **BlackHole (Virtual Audio Driver)**: To capture system audio (Zoom/Meet) without using external speakers.
-    -   Download and install **BlackHole 2ch**: [ExistentialAudio/BlackHole](https://github.com/ExistentialAudio/BlackHole)
-    -   *Why needed?* Meeting apps often take exclusive control of the microphone; BlackHole helps "loopback" the interviewer's audio output so the AI can hear it.
 
 ## 🚀 Installation
 
@@ -61,20 +58,7 @@ GEMINI_API_KEY=your_api_key_here
 
 ---
 
-## 🎧 Setup Audio (Important)
 
-For the AI to hear the interviewer (from Zoom/Meet), you need to configure a **Multi-Output Device** on MacOS:
-
-1.  Open **Audio MIDI Setup** (Search in Spotlight).
-2.  Click the `+` icon in the bottom left -> **Create Multi-Output Device**.
-3.  Check the boxes for:
-    -   ✅ **MacBook Speakers** (or your headphones) -> *So you can hear.*
-    -   ✅ **BlackHole 2ch** -> *So the AI can hear.*
-    -   (Select Master Device as Speakers/Headphones to control volume).
-4.  In MacOS Sound settings (System Settings -> Sound):
-    -   Output: Select the **Multi-Output Device** you just created.
-
----
 
 ## 🎮 Usage
 
@@ -83,7 +67,7 @@ For the AI to hear the interviewer (from Zoom/Meet), you need to configure a **M
     python main.py
     ```
 2.  On the Overlay interface:
-    -   **Device**: Select **BlackHole 2ch** (to hear the interviewer) or Microphone (to test your voice).
+    -   **Device**: Select **System Audio** (to hear the interviewer) or Microphone (to test your voice).
     -   **Language**: Select Vietnamese or English.
 3.  Click **Start Listening**.
 4.  When the interviewer finishes speaking, the AI will automatically detect, process, and display suggestions on the screen.
@@ -93,8 +77,7 @@ For the AI to hear the interviewer (from Zoom/Meet), you need to configure a **M
 ## ❓ Troubleshooting
 
 -   **No suggestions appearing?**
-    -   Check if BlackHole volume in Audio MIDI Setup is Muted.
-    -   Ensure you selected the correct Device (BlackHole) in the app.
+    -   Ensure you selected the correct Device in the app.
     -   Check the log on the interface for status (Listening/Processing).
 
 -   **OpenAI/Gemini API Error?**
