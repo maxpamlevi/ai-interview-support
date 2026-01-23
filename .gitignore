@@ -207,3 +207,61 @@ marimo/_lsp/
 __marimo__/
 .idea
 *.wav
+
+# ===== macOS =====
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# ===== Xcode =====
+DerivedData/
+build/
+*.xcworkspace/xcuserdata
+*.xcodeproj/xcuserdata
+*.xcodeproj/project.xcworkspace/xcuserdata
+*.xccheckout
+*.xcscmblueprint
+*.xcuserstate
+
+# User-specific settings
+xcuserdata/
+
+# ===== Swift Package Manager =====
+.build/
+Packages/
+Package.resolved
+
+# ===== Swift Playgrounds =====
+timeline.xctimeline
+playground.xcworkspace
+
+# ===== CocoaPods =====
+Pods/
+Podfile.lock
+
+# ===== Carthage =====
+Carthage/Build/
+
+# ===== Fastlane =====
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# ===== Logs =====
+*.log
+
+# ===== Environment / Secrets =====
+.env
+.env.*
+*.key
+*.pem
+
+# ===== Temporary files =====
+*.swp
+*.tmp
+*.temp
