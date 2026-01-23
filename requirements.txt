@@ -8,3 +8,7 @@ scipy
 torchaudio
 packaging
 silero-vad
+pyobjc-framework-ScreenCaptureKit
+pyobjc-framework-CoreMedia
+pyobjc-framework-Cocoa
+pyobjc-framework-AVFoundation

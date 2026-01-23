@@ -6,6 +6,7 @@ from overlay_ui import OverlayUI
 from audio_recorder import AudioRecorder
 from gemini_client import GeminiClient
 import config
+from sc_recorder import SCRecorder
 
 # Worker to handle API calls ensuring UI doesn't freeze
 class AssistantWorker(QObject):
@@ -20,8 +21,33 @@ class AssistantWorker(QObject):
     def process_audio(self, audio_data, language):
         # This function will run in a separate QThread
         self.update_status_signal.emit(f"Processing ({language})...", "#FFC107") # Amber
-        suggestion = self.gemini_client.generate_suggestion(audio_data, language=language)
-        self.update_suggestion_signal.emit(suggestion)
+        
+        # --- TEST MODE: SAVE AUDIO & SKIP API ---
+        import scipy.io.wavfile
+        import numpy as np
+        import time
+        import os
+        
+        timestamp = int(time.time())
+        filename = f"debug_audio_{timestamp}.wav"
+        
+        # AudioRecorder uses config.SAMPLE_RATE.
+        # We assume 16000 or 48000 depending on source, but config.SAMPLE_RATE is safer
+        rate = config.SAMPLE_RATE
+        # If SCK provides 48k, saving as 16k might be wrong pitch if we didn't resample.
+        # But both recorders currently try to emit processed/resampled audio?
+        # NO. AudioRecorder emits result of VAD buffer which is high quality buffer?
+        # AudioRecorder: `self.current_buffer.append(indata)` -> indata is raw 48k/16k.
+        
+        scipy.io.wavfile.write(filename, rate, audio_data)
+        print(f"Saved debug audio to {os.path.abspath(filename)}")
+        
+        self.update_suggestion_signal.emit(f"Audio saved to {filename}. API call skipped.")
+        
+        # suggestion = self.gemini_client.generate_suggestion(audio_data, language=language)
+        # self.update_suggestion_signal.emit(suggestion)
+        # ----------------------------------------
+        
         self.update_status_signal.emit("Listening...", "#4CAF50") # Green
         self.finished_signal.emit()
 
@@ -32,51 +58,22 @@ def main():
     ui = OverlayUI()
     gemini_client = GeminiClient(api_key=config.GEMINI_API_KEY)
     
-    # Audio Recorder (Main Thread is owner, but runs its own internal thread for VAD)
+    # Audio Recorder (Microphones)
     recorder = AudioRecorder()
     
-    # Worker Thread Management
-    # We create a new worker/thread for each request? 
-    # OR we have a dedicated worker thread.
+    # SC Recorder (System Audio)
+    sc_recorder = SCRecorder()
     
+    # Worker Thread Management
     worker_thread = QThread()
     worker = AssistantWorker(gemini_client)
     worker.moveToThread(worker_thread)
     worker_thread.start()
     
-    # Signal Wrapper to bridge Recorder -> UI/Main -> Worker
-    # Recorder emits audio. Main knows UI state. Main triggers Worker.
-    
-
-
-    def handle_audio_processed(audio_data):
-        # This runs in Main Thread because recorder signal is connected here?
-        # WAIT. recorder.audio_processed_signal.emit() is called from recorder's internal thread.
-        # Connected to a slot in Main Thread (this function if defined in main scope implicitly?)
-        # Actually, python signals are not auto-queued across threads unless using Qt slots mechanism properly.
-        # But `recorder` is a QObject. `audio_processed_signal` is pyqtSignal.
-        pass
-
-    # Populate Device Combo
-    input_devices = AudioRecorder.list_input_devices()
-    for idx, name in input_devices:
-        ui.device_combo.addItem(f"{name}", idx)
-        # Select BlackHole if present by default
-        if "BlackHole" in name:
-            ui.device_combo.setCurrentIndex(ui.device_combo.count() - 1)
-
-
-    ui.show()
-    
-    # Signal Wrapper to bridge Recorder -> UI/Main -> Worker
-    # Recorder emits audio. Main knows UI state. Main triggers Worker.
-    
     class Coordinator(QObject):
         request_process = pyqtSignal(object, str) # audio, language
 
         def handle_audio(self, audio_data):
-            # This slot runs in the Main Thread because Coordinator is created in Main
-            # and signal comes from another thread (QueuedConnection)
             try:
                 language = ui.get_selected_language()
                 print(f"Audio received in Main Thread. Language: {language}")
@@ -87,30 +84,65 @@ def main():
     coordinator = Coordinator()
     coordinator.request_process.connect(worker.process_audio)
 
-    # Correct wiring:
-    # Connect recorder signal to coordinator slot
-    # This ensures the lambda/slot runs in Main Thread
+    # Wiring Recorders to Coordinator & UI
     recorder.audio_processed_signal.connect(coordinator.handle_audio)
-
-    # Connect Recorder Logs to UI
+    sc_recorder.audio_processed_signal.connect(coordinator.handle_audio)
+    
     recorder.log_signal.connect(ui.append_log)
+    sc_recorder.log_signal.connect(ui.append_log)
 
     # Connect Worker Signals to UI
     worker.update_suggestion_signal.connect(ui.append_suggestion)
     worker.update_status_signal.connect(ui.update_status)
-    # Log status changes
     worker.update_status_signal.connect(lambda msg, col: ui.append_log(f"Status: {msg}"))
 
-    # Connect UI buttons to Recorder
-    # Pass the selected device index when starting
-    ui.start_recording_signal.connect(lambda: recorder.start_recording(ui.get_selected_device_index()))
-    ui.stop_recording_signal.connect(recorder.stop_recording)
+    # Populate Device Combo
+    input_devices = AudioRecorder.list_input_devices()
+    # Append SCK device
+    input_devices.extend(SCRecorder.list_input_devices())
+    
+    for idx, name in input_devices:
+        ui.device_combo.addItem(f"{name}", idx)
+        # Select BlackHole or System Audio by default
+        if "System Audio" in name:
+            ui.device_combo.setCurrentIndex(ui.device_combo.count() - 1)
+        elif "BlackHole" in name and ui.device_combo.count() > 0:
+             # Prefer System Audio if available, else BlackHole
+             # If "System Audio" was just added, it is last.
+             # If we are iterating, we just set checking names.
+             pass
+
+    # Ensure System Audio is selected if available (last item usually)
+    if "System Audio" in ui.device_combo.itemText(ui.device_combo.count() - 1):
+        ui.device_combo.setCurrentIndex(ui.device_combo.count() - 1)
+
+    ui.show()
+
+    # Handle Processing Logic
+    def start_recording_wrapper():
+        idx = ui.get_selected_device_index()
+        # idx might be -999 for SCK
+        if idx == -999: # SCK
+            recorder.stop_recording()
+            sc_recorder.start_recording(idx)
+        else:
+            sc_recorder.stop_recording()
+            recorder.start_recording(idx)
+            
+    def stop_recording_wrapper():
+        recorder.stop_recording()
+        sc_recorder.stop_recording()
+
+    # Connect UI buttons
+    ui.start_recording_signal.connect(start_recording_wrapper)
+    ui.stop_recording_signal.connect(stop_recording_wrapper)
     
     # Clean exit
     try:
         sys.exit(app.exec())
     except SystemExit:
         recorder.stop_recording()
+        sc_recorder.stop_recording()
         worker_thread.quit()
         worker_thread.wait()
 
